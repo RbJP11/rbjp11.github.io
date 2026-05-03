@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partson Mutambudzi — Systems & Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root {
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-elevated: #27272a;
+  --text: #fafafa;
+  --text-secondary: #a1a1aa;
+  --accent-primary: #34d399;
+  --accent-secondary: #fbbf24;
+  --border: rgba(255,255,255,0.08);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.2);
+  color: #fff;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+}
+
+/* Navigation */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  background: rgba(5,5,7,0.8);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 72px;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--text), var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-primary);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Hero */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(34, 211, 238, 0.07) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(167, 139, 250, 0.07) 0%, transparent 50%);
+  animation: pulse 10s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.6; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.08); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 72px;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero-label::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: var(--accent-primary);
+}
+
+.hero-title { text-wrap: balance;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  max-width: 900px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin-top: 1.75rem;
+  line-height: 1.7;
+}
+
+.hero-btns {
+  margin-top: 3rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -8px rgba(255,255,255,0.25);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+/* Sections */
+.section {
+  padding: 120px 0;
+  position: relative;
+}
+
+.section-header {
+  margin-bottom: 5rem;
+  max-width: 600px;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-label::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent-primary);
+}
+
+.section-title { text-wrap: balance;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+/* Reveal Animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+
+/* About */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.about-text { text-wrap: pretty;
+  font-size: 1.125rem;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+.about-text p + p {
+  margin-top: 1.5rem;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.stat-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  border-color: rgba(34,211,238,0.2);
+  transform: translateY(-4px);
+}
+
+.stat-num {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-desc {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Projects */
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .project-card {
+    gap: 2rem;
+  }
+}
+
+.project-card.reverse .project-content {
+  order: 2;
+}
+
+.project-card.reverse .project-visual {
+  order: 1;
+}
+
+.project-meta {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.project-title { text-wrap: balance;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.project-desc { text-wrap: pretty;
+  font-size: 1.0625rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.project-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem 0;
+}
+
+.project-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.875rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+.project-features li i {
+  color: var(--accent-secondary);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.02);
+  transition: all 0.2s ease;
+}
+
+.tech-tag:hover {
+  border-color: var(--accent-secondary);
+  color: var(--accent-secondary);
+}
+
+/* Mockups */
+.project-visual {
+  position: relative;
+}
+
+.mockup-window {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px -16px rgba(0,0,0,0.6);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 100%;
+}
+
+.mockup-body {
+  padding: 1.75rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.mockup-window:hover {
+  transform: translateY(-8px) scale(1.01);
+}
+
+.mockup-header {
+  height: 44px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  gap: 0.5rem;
+}
+
+.mockup-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.mockup-dot.red { background: #ff5f57; }
+.mockup-dot.yellow { background: #febc2e; }
+.mockup-dot.green { background: #28c840; }
+
+.mockup-title {
+  margin-left: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+
+
+/* CallFlow Mockup */
+.callflow-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 480px) {
+  .callflow-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mockup-panel {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.mockup-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.routing-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.r-node {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: var(--accent-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.r-node.small {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.6875rem;
+}
+
+.r-branch {
+  width: 1px;
+  height: 1rem;
+  background: rgba(34, 211, 238, 0.25);
+  position: relative;
+}
+
+.r-branch::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -12px;
+  width: 25px;
+  height: 1px;
+  background: rgba(34, 211, 238, 0.25);
+}
+
+.r-node-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+pre.code-block {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.token-key { color: var(--accent-secondary); }
+.token-string { color: var(--accent-primary); }
+.token-num { color: #f472b6; }
+
+.aht-badge {
+  margin-top: 1rem;
+  background: rgba(34,211,238,0.08);
+  border: 1px solid rgba(34,211,238,0.2);
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.aht-badge .aht-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+}
+
+.aht-badge .aht-label {
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+/* SecureRoute Mockup */
+.mockup-window.dark-dash {
+  background: #0a0a10;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+}
+
+.pulse {
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-box {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-box .s-val {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-box .s-label {
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+.chart-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: 100px;
+}
+
+.chart-bar {
+  flex: 1;
+  background: linear-gradient(to top, rgba(34,211,238,0.6), rgba(167,139,250,0.2));
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+}
+
+.mockup-window:hover .chart-bar:nth-child(1) { height: 45% !important; }
+.mockup-window:hover .chart-bar:nth-child(2) { height: 78% !important; }
+.mockup-window:hover .chart-bar:nth-child(3) { height: 62% !important; }
+.mockup-window:hover .chart-bar:nth-child(4) { height: 91% !important; }
+.mockup-window:hover .chart-bar:nth-child(5) { height: 55% !important; }
+
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  margin-top: 1.5rem;
+}
+
+.map-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+
+.map-dot.active {
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px rgba(34,211,238,0.5);
+}
+
+.map-dot.threat {
+  background: #f87171;
+  box-shadow: 0 0 8px rgba(248,113,113,0.5);
+}
+
+/* Nexus Mockup */
+.mockup-window.light-ui {
+  background: #f5f5f7;
+  border-color: rgba(0,0,0,0.06);
+}
+
+.mockup-window.light-ui .mockup-header {
+  background: rgba(0,0,0,0.02);
+  border-color: rgba(0,0,0,0.06);
+}
+
+.mockup-window.light-ui .mockup-title {
+  color: #6b7280;
+}
+
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.ticket-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.04);
+  border-radius: 10px;
+}
+
+.t-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #22d3ee);
+  flex-shrink: 0;
+}
+
+.t-info { flex: 1; }
+
+.t-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #111827;
+  margin-bottom: 0.125rem;
+}
+
+.t-meta {
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.t-badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.t-badge.high { background: #fee2e2; color: #991b1b; }
+.t-badge.low { background: #d1fae5; color: #065f46; }
+
+.nexus-footer {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.nexus-stat {
+  text-align: center;
+}
+
+.nexus-stat .ns-val {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.nexus-stat .ns-label {
+  font-size: 0.6875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Sentinel Mockup */
+.mockup-window.terminal {
+  background: #0c0c0c;
+  border-color: #222;
+}
+
+.mockup-window.terminal .mockup-body {
+  font-family: var(--font-mono);
+  color: #4ade80;
+  padding: 1.5rem;
+}
+
+.term-line {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.term-prompt {
+  color: var(--accent-primary);
+  margin-right: 0.5rem;
+}
+
+.term-success {
+  color: #4ade80;
+}
+
+.term-warn {
+  color: #fbbf24;
+}
+
+.term-progress {
+  margin-top: 0.5rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: #1a1a1a;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22d3ee);
+  border-radius: 3px;
+  width: 0;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mockup-window:hover .progress-fill {
+  width: 85%;
+}
+
+/* Experience */
+.timeline {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent-primary), var(--accent-secondary), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 4rem;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -3rem;
+  top: 0.25rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent-primary);
+  transform: translateX(-5px);
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover::before {
+  background: var(--accent-primary);
+  box-shadow: 0 0 16px rgba(34,211,238,0.4);
+}
+
+.t-date {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  margin-bottom: 0.5rem;
+}
+
+.t-role {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.t-company {
+  font-size: 1.0625rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.t-desc { text-wrap: pretty;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 600px;
+}
+
+.t-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.t-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+/* Skills */
+.skills-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.bento-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  border-color: rgba(167,139,250,0.25);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5);
+}
+
+.bento-card.featured {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(34,211,238,0.05), rgba(167,139,250,0.05));
+}
+
+.bento-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.bento-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+}
+
+.bento-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.bento-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bento-list li {
+  padding: 0.625rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bento-list li:last-child {
+  border-bottom: none;
+}
+
+.bento-list li i {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-secondary);
+  flex-shrink: 0;
+}
+
+/* Contact */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.contact-info h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.contact-info > p {
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+  font-size: 1.0625rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid transparent;
+}
+
+.contact-item:hover {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.contact-item i {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.contact-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-item .ci-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 0.125rem;
+}
+
+.contact-item .ci-value {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.contact-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group textarea {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--accent-primary);
+  background: rgba(34,211,238,0.03);
+}
+
+.form-group textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 3rem 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  list-style: none;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--accent-primary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .about-grid,
+  .project-card,
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .project-card.reverse .project-content,
+  .project-card.reverse .project-visual {
+    order: unset;
+  }
+  .skills-bento {
+    grid-template-columns: 1fr 1fr;
+  }
+  .bento-card.featured {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .section { padding: 80px 0; }
+  .nav-links { display: none; }
+  .skills-bento { grid-template-columns: 1fr; }
+  .bento-card.featured { grid-column: span 1; }
+  .about-stats { grid-template-columns: 1fr; }
+  .hero-btns { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+  .timeline { padding-left: 2rem; }
+  .timeline-item::before { left: -2rem; transform: translateX(-5px); }
+  .timeline::before { left: 0; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <div class="logo">PM.</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="container hero-content">
+    <div class="hero-label reveal">Portfolio 2026</div>
+    <h1 class="hero-title reveal delay-1">
+      Bridging customer operations with <span class="gradient-text">secure infrastructure.</span>
+    </h1>
+    <p class="hero-subtitle reveal delay-2">
+      I'm Partson Mutambudzi — a Computer Science student specializing in Cyber Security & Business Information Systems. I design migration strategies, optimize mission-critical UX, and harden systems from call routing logic to Linux kernels.
+    </p>
+    <div class="hero-btns reveal delay-3">
+      <a href="#projects" class="btn btn-primary">
+        <i data-lucide="folder-open"></i> View Projects
+      </a>
+      <a href="#contact" class="btn btn-secondary">
+        <i data-lucide="mail"></i> Get in Touch
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">About</div>
+      <h2 class="section-title">Systems thinker with a customer-first mindset.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          Currently completing my BSc in Computer Science at Auckland University of Technology, I operate at the intersection of cybersecurity, systems engineering, and user experience design.
+        </p>
+        <p>
+          As a Senior Customer Service Representative at Answer Services NZ Ltd, I didn't just answer tickets — I was a core member of the project team in a company-wide software migration, debugging backend call routing logic with JSON and system logs, and redesigning data entry workflows that significantly reduced Average Handling Time.
+        </p>
+        <p>
+          Whether I'm hardening Linux environments, building AI-driven security dashboards, or optimizing CRM workflows, my approach is the same: understand the human problem, then architect the technical solution.
+        </p>
+      </div>
+      <div class="about-stats reveal delay-1">
+        <div class="stat-item">
+          <div class="stat-num">3+</div>
+          <div class="stat-desc">Years enterprise customer operations & systems experience</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">40%</div>
+          <div class="stat-desc">Reduction in AHT through UI/UX workflow optimization</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">0</div>
+          <div class="stat-desc">Downtime migrations across critical call platforms</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">AUT</div>
+          <div class="stat-desc">Pursuing double major in Cyber Security & BIS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Selected Work</div>
+      <h2 class="section-title">Concepts & projects built from real operational challenges.</h2>
+    </div>
+    <div class="projects">
+
+      <!-- Project 1: CallFlow -->
+      <div class="project-card reveal">
+        <div class="project-content">
+          <div class="project-meta">Enterprise Migration Suite — 2025</div>
+          <h3 class="project-title">CallFlow Migration Engine</h3>
+          <p class="project-desc">
+            A zero-downtime migration framework for legacy call management platforms. Built to bridge front-end UX requirements with complex back-end routing logic during enterprise-scale transitions — directly informed by my work leading the Answer Services NZ platform migration.
+          </p>
+          <ul class="project-features">
+            <li><i data-lucide="check-circle-2"></i> Real-time call routing simulation & conflict detection</li>
+            <li><i data-lucide="check-circle-2"></i> JSON schema validation with auto-repair heuristics</li>
+            <li><i data-lucide="check-circle-2"></i> AHT analytics dashboard for post-migration validation</li>
+            <li><i data-lucide="check-circle-2"></i> Role-based access control for hybrid teams</li>
+          </ul>
+          <div class="project-tech">
+            <span class="tech-tag">TypeScript</span>
+            <span class="tech-tag">React</span>
+            <span class="tech-tag">Node.js</span>
+            <span class="tech-tag">PostgreSQL</span>
+            <span class="tech-tag">Redis</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <div class="mockup-window">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">callflow-migration.ts</span>
+            </div>
+            <div class="mockup-body">
+              <div class="callflow-grid">
+                <div class="mockup-panel">
+                  <div class="mockup-label">Routing Logic</div>
+                  <div class="routing-tree">
+                    <div class="r-node">Inbound Queue</div>
+                    <div class="r-branch"></div>
+                    <div class="r-node-group">
+                      <div class="r-node small">Sales</div>
+                      <div class="r-node small">Support</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mockup-panel">
+                  <div class="mockup-label">Config</div>
+                  <pre class="code-block"><span class="token-key">"trigger"</span>: <span class="token-string">"onCallEnd"</span>,
+<span class="token-key">"route"</span>: <span class="token-string">"feedbackQueue"</span>,
+<span class="token-key">"fields"</span>: [
+  <span class="token-string">"csat"</span>,
+  <span class="token-string">"resolution"</span>
+]</pre>
+                </div>
+              </div>
+              <div class="aht-badge">
+                <div class="aht-val">−32%</div>
+                <div class="aht-label">Average Handling Time</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2: SecureRoute -->
+      <div class="project-card reverse reveal">
+        <div class="project-content">
+          <div class="project-meta">AI Security Dashboard — 2024</div>
+          <h3 class="project-title">SecureRoute AI</h3>
+          <p class="project-desc">
+            An AI-driven network security monitoring platform that detects behavioral anomalies in real-time traffic. Designed for privacy-compliant threat detection in hybrid cloud environments, merging my Cyber Security coursework with production-grade systems thinking.
+          </p>
+          <ul class="project-features">
+            <li><i data-lucide="check-circle-2"></i> Python/TensorFlow behavioral anomaly detection</li>
+            <li><i data-lucide="check-circle-2"></i> Real-time packet metadata analysis via WebSockets</li>
+            <li><i data-lucide="check-circle-2"></i> Automated GDPR compliance scoring engine</li>
+            <li><i data-lucide="check-circle-2"></i> Linux-native agent for edge deployment</li>
+          </ul>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">TensorFlow</span>
+            <span class="tech-tag">Linux</span>
+            <span class="tech-tag">Flask</span>
+            <span class="tech-tag">WebSockets</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <div class="mockup-window dark-dash">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">SecureRoute AI — Dashboard</span>
+            </div>
+            <div class="mockup-body">
+              <div class="status-row">
+                <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-secondary);">Network: AS-NZ-Prod</span>
+                <div class="status-badge"><div class="pulse"></div> Secure</div>
+              </div>
+              <div class="stats-row">
+                <div class="stat-box">
+                  <div class="s-val">99.9%</div>
+                  <div class="s-label">Uptime</div>
+                </div>
+                <div class="stat-box">
+                  <div class="s-val">0</div>
+                  <div class="s-label">Threats</div>
+                </div>
+              </div>
+              <div class="chart-area">
+                <div class="chart-bar" style="height:35%"></div>
+                <div class="chart-bar" style="height:65%"></div>
+                <div class="chart-bar" style="height:50%"></div>
+                <div class="chart-bar" style="height:80%"></div>
+                <div class="chart-bar" style="height:45%"></div>
+              </div>
+              <div class="map-grid">
+                <!-- Generating some dots via JS would be cleaner, but using static for reliability -->
+                <div class="map-dot"></div><div class="map-dot active"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div>
+                <div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot active"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot threat"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div>
+                <div class="map-dot"></div><div class="map-dot"></div><div class="map-dot active"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot"></div><div class="map-dot active"></div><div class="map-dot"></div><div class="map-dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3: Nexus CRM -->
+      <div class="project-card reveal">
+        <div class="project-content">
+          <div class="project-meta">CRM Optimization Toolkit — 2024</div>
+          <h3 class="project-title">Nexus CRM Toolkit</h3>
+          <p class="project-desc">
+            A high-performance augmentation layer for enterprise CRM systems in high-volume support centers. Optimizes ticket triage, custom Information Field design, and real-time benchmarking — directly translating my frontline UI/UX optimization work into scalable software.
+          </p>
+          <ul class="project-features">
+            <li><i data-lucide="check-circle-2"></i> Automated ticket classification & priority routing</li>
+            <li><i data-lucide="check-circle-2"></i> Drag-and-drop Information Field designer</li>
+            <li><i data-lucide="check-circle-2"></i> Real-time AHT benchmarking & alerting</li>
+            <li><i data-lucide="check-circle-2"></i> JSON-based CRM schema adapter</li>
+          </ul>
+          <div class="project-tech">
+            <span class="tech-tag">TypeScript</span>
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">JSON</span>
+            <span class="tech-tag">SQL</span>
+            <span class="tech-tag">REST APIs</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <div class="mockup-window light-ui">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">Nexus CRM</span>
+            </div>
+            <div class="mockup-body">
+              <div class="ticket-list">
+                <div class="ticket-row">
+                  <div class="t-avatar"></div>
+                  <div class="t-info">
+                    <div class="t-title">Migration Bug #402</div>
+                    <div class="t-meta">Priority <span class="t-badge high">High</span></div>
+                  </div>
+                </div>
+                <div class="ticket-row">
+                  <div class="t-avatar"></div>
+                  <div class="t-info">
+                    <div class="t-title">Field Request — Sales Queue</div>
+                    <div class="t-meta">Priority <span class="t-badge low">Low</span></div>
+                  </div>
+                </div>
+                <div class="ticket-row">
+                  <div class="t-avatar"></div>
+                  <div class="t-info">
+                    <div class="t-title">Route Logic Review</div>
+                    <div class="t-meta">Priority <span class="t-badge high">High</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="nexus-footer">
+                <div class="nexus-stat">
+                  <div class="ns-val">1,204</div>
+                  <div class="ns-label">Tickets</div>
+                </div>
+                <div class="nexus-stat">
+                  <div class="ns-val">4m 12s</div>
+                  <div class="ns-label">Avg Handle</div>
+                </div>
+                <div class="nexus-stat">
+                  <div class="ns-val">98%</div>
+                  <div class="ns-label">CSAT</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 4: Sentinel -->
+      <div class="project-card reverse reveal">
+        <div class="project-content">
+          <div class="project-meta">Linux Security Automation — 2023</div>
+          <h3 class="project-title">Sentinel Hardening Suite</h3>
+          <p class="project-desc">
+            An automated Linux security hardening and compliance toolkit designed for SMEs. Runs CIS benchmark audits, generates privacy-compliant remediation scripts, and produces executive-ready compliance reports — built from my Cyber Security & Linux programming coursework.
+          </p>
+          <ul class="project-features">
+            <li><i data-lucide="check-circle-2"></i> Automated CIS Level 1 & 2 benchmark audits</li>
+            <li><i data-lucide="check-circle-2"></i> Bash/Python remediation script generation</li>
+            <li><i data-lucide="check-circle-2"></i> Data Privacy Impact Assessment reports</li>
+            <li><i data-lucide="check-circle-2"></i> SQLite-backed vulnerability history</li>
+          </ul>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Bash</span>
+            <span class="tech-tag">Linux</span>
+            <span class="tech-tag">SQLite</span>
+            <span class="tech-tag">CIS</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <div class="mockup-window terminal">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">sentinel — bash</span>
+            </div>
+            <div class="mockup-body">
+              <div class="term-line">
+                <span class="term-prompt">$</span> sentinel --audit --level 2
+              </div>
+              <div class="term-line term-success">
+                [✓] Kernel parameters hardened
+              </div>
+              <div class="term-line term-success">
+                [✓] Password policy enforced
+              </div>
+              <div class="term-line term-warn">
+                [!] SSH root login detected — remediating...
+              </div>
+              <div class="term-line">
+                <div class="term-progress">
+                  <div class="progress-track">
+                    <div class="progress-fill"></div>
+                  </div>
+                  <span style="font-size:0.75rem;color:var(--text-secondary);">Scanning ports 1-65535...</span>
+                </div>
+              </div>
+              <div class="term-line term-success" style="margin-top:0.5rem;">
+                [✓] Audit complete. 12/12 checks passed.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 5: Keylogger -->
+      <div class="project-card reveal">
+        <div class="project-content">
+          <div class="project-meta">Cyber Security Research — 2025</div>
+          <h3 class="project-title">Keylogger Security Framework</h3>
+          <p class="project-desc">
+            An ethical keystroke monitoring and detection framework built for authorized penetration testing and security research. Demonstrates deep understanding of input capture mechanisms, process injection vectors, and defensive countermeasures — enabling security teams to validate endpoint detection strategies and harden systems against unauthorized surveillance.
+          </p>
+          <ul class="project-features">
+            <li><i data-lucide="check-circle-2"></i> Low-level keyboard hooks & input event capture</li>
+            <li><i data-lucide="check-circle-2"></i> Encrypted log streaming with AES-256-GCM</li>
+            <li><i data-lucide="check-circle-2"></i> Process injection detection & alerting module</li>
+            <li><i data-lucide="check-circle-2"></i> Cross-platform support (Windows Win32 API / Linux X11)</li>
+          </ul>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">C++</span>
+            <span class="tech-tag">Win32 API</span>
+            <span class="tech-tag">Linux X11</span>
+            <span class="tech-tag">Cryptography</span>
+          </div>
+        </div>
+        <div class="project-visual">
+          <div class="mockup-window terminal">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">shadowtrace — python3</span>
+            </div>
+            <div class="mockup-body">
+              <div class="term-line">
+                <span class="term-prompt">$</span> python3 shadowtrace.py --mode=audit --target=endpoint-07
+              </div>
+              <div class="term-line term-success">
+                [✓] Hook initialized: WH_KEYBOARD_LL
+              </div>
+              <div class="term-line term-warn">
+                [!] Suspicious input capture detected on PID 8842
+              </div>
+              <div class="term-line">
+                <span class="term-prompt">$</span> cat logs/audit_2025-04-30.enc
+              </div>
+              <div class="term-line" style="color: var(--text-secondary);">
+                &lt;encrypted stream&gt; — AES-256-GCM // 14,204 events
+              </div>
+              <div class="term-line term-success" style="margin-top:0.5rem;">
+                [✓] Baseline anomaly: 0.03% deviation — system secure
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Experience</div>
+      <h2 class="section-title">From frontline support to systems engineering.</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="t-date">Jan 2025 — Feb 2026</div>
+        <div class="t-role">Senior Customer Service Representative</div>
+        <div class="t-company">Answer Services NZ Ltd, Auckland (Hybrid)</div>
+        <div class="t-desc">
+          Played a key role as a core member of the project team in a company-wide software migration, bridging front-end user requirements with back-end functionality. Designed custom Information Fields that significantly reduced Average Handling Time. Configured and troubleshot complex call routing logic, backend triggers, and diagnosed software bugs using JSON and system logs during the migration phase.
+        </div>
+        <div class="t-tags">
+          <span class="t-tag">Software Migration</span>
+          <span class="t-tag">UI/UX Optimization</span>
+          <span class="t-tag">JSON Debugging</span>
+          <span class="t-tag">Systems Engineering</span>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="t-date">Jul 2024 — Jan 2025</div>
+        <div class="t-role">Call Center Representative</div>
+        <div class="t-company">Answer Services NZ Ltd, Auckland (On-site)</div>
+        <div class="t-desc">
+          Managed high-volume customer support tickets with professional communication and efficient resolution. Utilized Microsoft Office and proprietary CRM tools for comprehensive office administration. Applied software development principles to assist in early-stage troubleshooting of system errors.
+        </div>
+        <div class="t-tags">
+          <span class="t-tag">CRM Administration</span>
+          <span class="t-tag">Technical Troubleshooting</span>
+          <span class="t-tag">High-Volume Support</span>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="t-date">Nov 2023 — Jul 2024</div>
+        <div class="t-role">Kitchen Assistant</div>
+        <div class="t-company">Rice Paper Scissors, Auckland (On-site)</div>
+        <div class="t-desc">
+          Developed a strong work ethic and adaptability in high-pressure catering environments. Applied disciplined teamwork and communication to facilitate smooth daily operations — skills that directly translate to fast-paced incident response and on-call rotations.
+        </div>
+        <div class="t-tags">
+          <span class="t-tag">Teamwork</span>
+          <span class="t-tag">High-Pressure Ops</span>
+          <span class="t-tag">Communication</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Capabilities</div>
+      <h2 class="section-title">A multidisciplinary toolkit for modern infrastructure.</h2>
+    </div>
+    <div class="skills-bento">
+      <div class="bento-card featured reveal">
+        <div class="bento-header">
+          <div class="bento-icon"><i data-lucide="shield"></i></div>
+          <h3>Security & Systems</h3>
+        </div>
+        <ul class="bento-list">
+          <li><i data-lucide="check"></i> Cyber Security Principles & Threat Modeling</li>
+          <li><i data-lucide="check"></i> Linux System Administration & Hardening</li>
+          <li><i data-lucide="check"></i> Data Privacy & GDPR Compliance</li>
+          <li><i data-lucide="check"></i> Network Security & Packet Analysis</li>
+          <li><i data-lucide="check"></i> CIS Benchmark Auditing</li>
+        </ul>
+      </div>
+      <div class="bento-card reveal delay-1">
+        <div class="bento-header">
+          <div class="bento-icon"><i data-lucide="code-2"></i></div>
+          <h3>Engineering</h3>
+        </div>
+        <ul class="bento-list">
+          <li><i data-lucide="check"></i> Python & TypeScript Development</li>
+          <li><i data-lucide="check"></i> JSON, SQL & REST API Design</li>
+          <li><i data-lucide="check"></i> Software Architecture & Databases</li>
+          <li><i data-lucide="check"></i> AI/ML Integration (TensorFlow)</li>
+        </ul>
+      </div>
+      <div class="bento-card reveal delay-2">
+        <div class="bento-header">
+          <div class="bento-icon"><i data-lucide="layout"></i></div>
+          <h3>Design & UX</h3>
+        </div>
+        <ul class="bento-list">
+          <li><i data-lucide="check"></i> UI/UX Optimization & Workflow Design</li>
+          <li><i data-lucide="check"></i> Data Visualization Dashboards</li>
+          <li><i data-lucide="check"></i> CRM Interface Customization</li>
+          <li><i data-lucide="check"></i> Information Architecture</li>
+        </ul>
+      </div>
+      <div class="bento-card reveal">
+        <div class="bento-header">
+          <div class="bento-icon"><i data-lucide="users"></i></div>
+          <h3>Operations</h3>
+        </div>
+        <ul class="bento-list">
+          <li><i data-lucide="check"></i> Call Routing Logic & IVR Systems</li>
+          <li><i data-lucide="check"></i> Technical Troubleshooting & Escalation</li>
+          <li><i data-lucide="check"></i> Project & Web Project Management</li>
+          <li><i data-lucide="check"></i> Cross-functional Team Leadership</li>
+        </ul>
+      </div>
+      <div class="bento-card reveal delay-1">
+        <div class="bento-header">
+          <div class="bento-icon"><i data-lucide="languages"></i></div>
+          <h3>Languages</h3>
+        </div>
+        <ul class="bento-list">
+          <li><i data-lucide="check"></i> English — Native</li>
+          <li><i data-lucide="check"></i> Shona — Fluent</li>
+          <li><i data-lucide="check"></i> French — Basic</li>
+        </ul>
+      </div>
+      <div class="bento-card reveal delay-2">
+        <div class="bento-header">
+          <div class="bento-icon"><i data-lucide="graduation-cap"></i></div>
+          <h3>Education</h3>
+        </div>
+        <ul class="bento-list">
+          <li><i data-lucide="check"></i> BSc Computer Science — AUT (2023–Present)</li>
+          <li><i data-lucide="check"></i> Majors: Cyber Security & BIS</li>
+          <li><i data-lucide="check"></i> NCEA Level 3 — St Patrick's College</li>
+          <li><i data-lucide="check"></i> Leadership: School Prefect</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Let's build secure, scalable systems together.</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Ready for your next hire.</h3>
+        <p>
+          I'm currently seeking opportunities at top-tier IT companies and customer support leadership roles where technical depth and user empathy intersect. If you need someone who can debug a JSON routing tree in the morning and design a compliance dashboard in the afternoon, let's talk.
+        </p>
+        <a href="mailto:pjmutambudzi@outlook.co.nz" class="contact-item">
+          <i data-lucide="mail"></i>
+          <div>
+            <span class="ci-label">Email</span>
+            <span class="ci-value">pjmutambudzi@outlook.co.nz</span>
+          </div>
+        </a>
+        <a href="tel:+642102211606" class="contact-item">
+          <i data-lucide="phone"></i>
+          <div>
+            <span class="ci-label">Phone</span>
+            <span class="ci-value">021 022 11606</span>
+          </div>
+        </a>
+        <div class="contact-item">
+          <i data-lucide="map-pin"></i>
+          <div>
+            <span class="ci-label">Location</span>
+            <span class="ci-value">316 Hurstmere Road, Takapuna, Auckland</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal delay-1">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@company.com">
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" placeholder="Tell me about the role, the stack, or the challenge..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="alert('Thanks for reaching out! This is a demo form — please email pjmutambudzi@outlook.co.nz directly.')">
+          <i data-lucide="send"></i> Send Message
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <ul class="footer-links">
+      <li><a href="https://github.com/" target="_blank">GitHub</a></li>
+      <li><a href="https://linkedin.com/" target="_blank">LinkedIn</a></li>
+      <li><a href="mailto:pjmutambudzi@outlook.co.nz">Email</a></li>
+    </ul>
+    <p> Partson Mutambudzi. Built with precision. Auckland, New Zealand.</p>
+  </div>
+</footer>
+
+<script>
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Intersection Observer for scroll reveals
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
